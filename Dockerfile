@@ -20,4 +20,4 @@ EXPOSE 8888
 EXPOSE 8080
 
 # Start the Juptyer notebook server and Flask app.
-ENTRYPOINT [ "sh", "./start-app.sh" ]
+ENTRYPOINT [ "sh", "./start-apps.sh" ]
