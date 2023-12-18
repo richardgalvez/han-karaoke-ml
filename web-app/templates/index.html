@@ -3,10 +3,21 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Flask with Docker</title>
+        <title>HearAndNow Karaoke Song Recommendation</title>
     </head>
     <body>
-        <h1>This is a Flask App containerized with Docker! Amazing! </h1>
-        <a href="http://localhost:8888/" target="_blank">Check out Jupyter Notebook</a>
+        <h1>HearAndNow Karaoke Song Recommendation</h1>
+        <a href="http://localhost:8888/notebooks/song-recommend-ml.ipynb" target="_blank">
+            Check out the Jupyter Notebook.</a>
+
+        <h2>Here are some recommendations for you:</h2>
+        {% for cluster_number in range(15) %}
+            <h2>Group {{ cluster_number }}'s' Songs:</h2>
+            <ul>
+                {% for track_name, artist_name in clusters[clusters['clusters'] == cluster_number][['track_name', 'artist_name']].itertuples(index=False) %}
+                    <li>{{ track_name }} by {{ artist_name }}</li>
+                {% endfor %}
+        </ul>
+    {% endfor %}
     </body>
 </html>
