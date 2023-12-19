@@ -33,12 +33,18 @@ Design and develop your fully functional data product that addresses your identi
 2. Go to root directory of folder.
 
 3. Run in terminal/command window:
+
     docker compose up --build -d
 
 Done! Next:
+
 Access Jupyter Notebook at: http://localhost:8888
+
 Access Flask Web App at: http://localhost:8080
 
+
 To stop container and remove:
+
 docker compose down
+
 docker rmi han-karaoke-ml-c964

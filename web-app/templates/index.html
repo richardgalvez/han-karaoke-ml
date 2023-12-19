@@ -1,23 +1,71 @@
 <!DOCTYPE html>
-
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>HearAndNow Karaoke Song Recommendation</title>
-    </head>
-    <body>
-        <h1>HearAndNow Karaoke Song Recommendation</h1>
-        <a href="http://localhost:8888/notebooks/song-recommend-ml.ipynb" target="_blank">
-            Check out the Jupyter Notebook.</a>
+<head>
+    <!-- Add your head content here -->
+    <style>
+        body {
+            text-align: center; /* Center align the text in the body */
+            margin: 10px; /* Add a small margin to the body */
+        }
 
-        <h2>Here are some recommendations for you:</h2>
-        {% for cluster_number in range(15) %}
-            <h2>Group {{ cluster_number }}'s' Songs:</h2>
-            <ul>
-                {% for track_name, artist_name in clusters[clusters['clusters'] == cluster_number][['track_name', 'artist_name']].itertuples(index=False) %}
-                    <li>{{ track_name }} by {{ artist_name }}</li>
+        h1, h2 {
+            margin: 10px 0; /* Add margin only at the top and bottom of h1 and h2 */
+        }
+
+        table {
+            width: 80%; /* Reduce the width of the table */
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 5px; /* Reduce padding */
+        }
+        th {
+            background-color: #91d1ff;
+        }
+    </style>
+</head>
+<body>
+
+    {% if selected_song %}
+        <h1>Selected Song</h1>
+        <p>Title: {{ selected_song['track_name'].values[0] }}</p>
+        <p>Artist: {{ selected_song['artist_name'].values[0] }}</p>
+        <p><a href="{{ url_for('song') }}">View Details</a></p>
+    {% else %}
+        <h1>Welcome to the HearAndNow Karaoke App!</h1>
+        <h2>Select your song! What are you in the mood to sing?</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>HearAndNow Karaoke Recommended Songs</th>
+                    <button class="refreshButton"onclick="location.reload()">Re-roll Songs</button>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cluster_id in clusters['clusters'].unique() %}
+                    <tr>
+                        <td>
+                            {% set selected_song = clusters[clusters['clusters'] == cluster_id].sample() %}
+                            <p>Title: {{ selected_song['track_name'].values[0] }}</p>
+                            <p>Artist: {{ selected_song['artist_name'].values[0] }}</p>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('song') }}" method="post">
+                                <input type="hidden" name="cluster_id" value="{{ cluster_id }}">
+                                <input type="hidden" name="selected_song_index" value="{{ loop.index0 }}">
+                                <input type="hidden" name="selected_song_title" value="{{ selected_song['track_name'].values[0] }}">
+                                <input type="hidden" name="selected_song_artist" value="{{ selected_song['artist_name'].values[0] }}">
+                                <button type="submit">Select</button>
+                            </form>                            
+                        </td>
+                    </tr>
                 {% endfor %}
-        </ul>
-    {% endfor %}
-    </body>
+            </tbody>
+        </table>
+    {% endif %}
+
+</body>
 </html>
