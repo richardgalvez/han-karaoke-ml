@@ -1,3 +1,4 @@
 function reroll() {
-    location.reload(true); // Refresh the page, fetching new recommendations
+    // Refresh the page to fetch new recommendations.
+    location.reload(true); 
 }

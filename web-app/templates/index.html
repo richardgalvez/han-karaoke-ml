@@ -1,32 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <!-- Add your head content here -->
-    <style>
-        body {
-            text-align: center; /* Center align the text in the body */
-            margin: 10px; /* Add a small margin to the body */
-        }
-
-        h1, h2 {
-            margin: 10px 0; /* Add margin only at the top and bottom of h1 and h2 */
-        }
-
-        table {
-            width: 80%; /* Reduce the width of the table */
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 5px; /* Reduce padding */
-        }
-        th {
-            background-color: #91d1ff;
-        }
-    </style>
-</head>
+    <head>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500&display=swap" rel="stylesheet">
+    </head>    
 <body>
+    <title>HearAndNow Karaoke App</title>
 
     {% if selected_song %}
         <h1>Selected Song</h1>
@@ -35,13 +17,15 @@
         <p><a href="{{ url_for('song') }}">View Details</a></p>
     {% else %}
         <h1>Welcome to the HearAndNow Karaoke App!</h1>
-        <h2>Select your song! What are you in the mood to sing?</h2>
+        <h2>Select your song! What are you in the mood to sing right now?</h2>
 
         <table>
             <thead>
                 <tr>
                     <th>HearAndNow Karaoke Recommended Songs</th>
-                    <button class="refreshButton"onclick="location.reload()">Re-roll Songs</button>
+                    <th>
+                    <button class="refreshButton"onclick="reroll()">Re-roll Songs</button>
+                    </th>
                 </tr>
             </thead>
             <tbody>

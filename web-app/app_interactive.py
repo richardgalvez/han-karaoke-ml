@@ -40,6 +40,7 @@ def apply_pca(data_scaled):
 
     return pca_data
 
+# Initialize the Flask application.
 app = Flask(__name__)
 
 # Load karaoke song data.
@@ -57,6 +58,7 @@ pca_data = apply_pca(data_scaled)
 # Merge the original DataFrame with the clustered data.
 clusters = pd.merge(df[['track_name', 'artist_name']], data_scaled[['clusters']], left_index=True, right_index=True)
 
+# Home page.
 @app.route("/", methods=['GET', 'POST'])
 def index():
     selected_song = None
@@ -74,13 +76,14 @@ def index():
     return render_template('index.html', clusters=clusters, selected_song=selected_song)
 
 
+# Selected song page.
 @app.route("/song", methods=['GET', 'POST'])
 def song():
-    # Retrieve form inputs
+    # Retrieve form inputs.
     cluster_id_str = request.form.get('cluster_id')
     selected_song_index_str = request.form.get('selected_song_index')
 
-    # Check if cluster_id and selected_song_index are not empty
+    # Check if cluster_id and selected_song_index are not empty.
     if cluster_id_str and selected_song_index_str:
         # Convert to integers
             cluster_id = int(cluster_id_str)

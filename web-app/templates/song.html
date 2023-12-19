@@ -2,13 +2,19 @@
 <html lang="en">
     <head>
         <script src="{{ url_for('static', filename='script.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     </head>
 <body>
-    <h1>Your Selected Song is:</h1>
-    <p>Title: {{ selected_song_title }}</p>
-    <p>Artist: {{ selected_song_artist }}</p>
+    <title>HearAndNow Karaoke App - {{ selected_song_title }} by {{ selected_song_artist }}</title>
+
+    <div id="selected-song">
+        <h3>Your Selected Song is:</h3>
+        <h1>{{ selected_song_title }}</h1>
+        <p>by:</p>
+        <h2>{{ selected_song_artist }}</h2>
+    </div>
     
-    <h2>How about one of these songs next?</h2>
+    <h3>How about one of these songs next?</h3>
     <table>
         <thead>
             <tr>
@@ -36,7 +42,7 @@
         </tbody>
     </table>
 
-    <!-- Button to reroll for another set -->
+    <!-- Button to re-roll for another set -->
     <button class="refreshButton"onclick="reroll()">Re-roll Songs</button>
 
     <!-- Button to restart recommendation system -->
