@@ -19,7 +19,7 @@ def preprocess_data(df):
     return scaled_data
 
 def apply_kmeans(scaled_data, num_clusters=15):
-    # Use KMeans (non-descriptive method) with the same seed for consistency.
+    # Use KMeans (descriptive, unsupervised method) with the same seed as Jupyter Notebook for consistency.
     kmeans = KMeans(n_clusters=num_clusters, random_state=75)
     kfit = kmeans.fit(scaled_data)
     # Predicting the clusters.

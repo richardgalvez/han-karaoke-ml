@@ -35,11 +35,11 @@ th {
 }
 
 #selected-song {
-    border: 2px solid #a7d0eb;
+    border: 2px solid #465661b1;
     padding: 15px;
     margin: 20px;
     font-size: 1.2em;
-    background-color: #4b9487;
+    background-color: #8bf3df;
 }
 
 button {
@@ -82,4 +82,16 @@ button:hover {
     padding: 4px;
     border: 2px solid #ccc;
     border-radius: 4px;
+}
+
+.song-row.selected {
+    background-color: #87CEEB;
+}
+
+.song-row:hover {
+    background-color: #f2f2f2;
+}
+
+.highlighted-row {
+    background-color: #ffe863;
 }
