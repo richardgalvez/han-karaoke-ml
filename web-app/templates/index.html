@@ -30,33 +30,44 @@
     </form>
 
     <div id="selected-song">
-        <h3>Your Selected Song is:</h3>
-        <h1>{{ selected_song }}</h1>
-        <p>by:</p>
-        <h2>{{ selected_song_artist }}</h2>
-        <p>Search on <a href="https://www.youtube.com/results?search_query={{ selected_song }}+{{ selected_song_artist }}+karaoke" target="_blank">YouTube</a></p>
+        {% if selected_song %}
+            <h3>Your Selected Song is:</h3>
+            <h1>{{ selected_song }}</h1>
+            <p>by:</p>
+            <h2>{{ selected_song_artist }}</h2>
+            <p>Search on <a href="https://www.youtube.com/results?search_query={{ selected_song }}+{{ selected_song_artist }}+karaoke" target="_blank">YouTube</a></p>
+        {% endif %}
     </div>
 
     <div id="history-and-percentages">
         <div class="history-section">
-            <p>Previously Selected:</p>
-            <div class="compact-list">
-                {% for song, count in user_selections.items() %}
-                    {% set artist = clusters[clusters['track_name'] == song]['artist_name'].iloc[0] %}
-                    <div>{{ song }} by {{ artist }}</div>
-                {% endfor %}
-            </div>
+            {% if user_selections %}
+                <p>Previously Selected ({{ user_selections|length }}):</p>
+                <div class="compact-list">
+                    {% for song, count in user_selections.items() %}
+                        {% set artist = clusters[clusters['track_name'] == song]['artist_name'].iloc[0] %}
+                        <div>{{ song }} by {{ artist }}</div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No selections yet</p>
+            {% endif %}
         </div>
     
         <div class="percentages-section">
-            <p>Song Group Selection Rate:</p>
-            <div class="compact-list">
-                {% for cluster, percentage in cluster_percentages.items() %}
-                    {% set highlighted_class = 'highlighted-row' if loop.first %} {# Check if it's the first iteration (highest percentage) #}
-                    <div class="{{ highlighted_class }}">Song Group {{ cluster }}: {{ "{:.2f}".format(percentage) }}%</div>
-                {% endfor %}
-            </div>
+            {% if cluster_percentages %}
+                <p>Song Group Selection Rate (out of {{ user_selections|length }}):</p>
+                <div class="compact-list">
+                    {% for cluster, percentage in cluster_percentages.items() %}
+                        {% set highlighted_class = 'highlighted-row' if loop.first %} {# Check if it's the first iteration (highest percentage) #}
+                        <div class="{{ highlighted_class }}">Song Group {{ cluster }}: {{ "{:.2f}".format(percentage) }}%</div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No selections yet</p>
+            {% endif %}
         </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -68,18 +79,18 @@
                     var submitButton = document.querySelector('.submit-button');
                     var selectedSong = this.dataset.song;
 
-                    // Set the selected song in the hidden input
+                    // Set the selected song in the hidden input.
                     selectedSongInput.value = selectedSong;
 
-                    // Remove highlighting from all rows
+                    // Remove highlighting from all rows.
                     songRows.forEach(function (r) {
                         r.classList.remove('selected');
                     });
 
-                    // Add highlighting to the selected row
+                    // Add highlighting to the selected row.
                     this.classList.add('selected');
 
-                    // Enable the submit button
+                    // Enable the submit button.
                     submitButton.removeAttribute('disabled');
                 });
             });

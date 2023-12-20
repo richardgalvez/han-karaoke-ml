@@ -70,7 +70,7 @@ def home():
 
     overall_percentages = {cluster: (count / total_selections) * 100 if total_selections > 0 else 0 for cluster, count in overall_counts.items()}
 
-    # Sort the overall_percentages dictionary by percentage in descending order.
+    # Sort the overall_percentages dictionary by percentage in descending order so it can be seen upon loading.
     sorted_cluster_percentages = {cluster: percentage for cluster, percentage in sorted(overall_percentages.items(), key=lambda item: item[1], reverse=True)}
 
     return render_template('index.html', selected_song=None, selected_song_artist=None, user_selections=user_selections, cluster_percentages=sorted_cluster_percentages, clusters=clusters)

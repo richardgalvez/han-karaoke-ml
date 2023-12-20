@@ -38,9 +38,9 @@ Design and develop your fully functional data product that addresses your identi
 
 Done! Next:
 
-Access Jupyter Notebook at: http://localhost:8888
+Access Jupyter Notebook Interface/Home at: http://localhost:8888
 
-Access Flask Web App at: http://localhost:8080
+Access Flask Web App UI at: http://localhost:8080
 
 
 To stop container and remove:
