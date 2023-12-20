@@ -58,6 +58,9 @@ pca_data = apply_pca(data_scaled)
 # Merge the original DataFrame with the clustered data.
 clusters = pd.merge(df[['track_name', 'artist_name']], data_scaled[['clusters']], left_index=True, right_index=True)
 
+# Define a global variable to store the selected song information
+selected_song_info = None
+
 # Home page.
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -79,6 +82,8 @@ def index():
 # Selected song page.
 @app.route("/song", methods=['GET', 'POST'])
 def song():
+    global selected_song_info
+
     # Retrieve form inputs.
     cluster_id_str = request.form.get('cluster_id')
     selected_song_index_str = request.form.get('selected_song_index')
@@ -86,17 +91,49 @@ def song():
     # Check if cluster_id and selected_song_index are not empty.
     if cluster_id_str and selected_song_index_str:
         # Convert to integers
-            cluster_id = int(cluster_id_str)
-            selected_song_index = int(selected_song_index_str)
+        cluster_id = int(cluster_id_str)
+        selected_song_index = int(selected_song_index_str)
 
-            # Retrieve the selected song.
-            selected_song_title = request.form.get('selected_song_title')
-            selected_song_artist = request.form.get('selected_song_artist')
+        # Retrieve the selected song.
+        selected_song_title = request.form.get('selected_song_title')
+        selected_song_artist = request.form.get('selected_song_artist')
 
-            # Retrieve the next 3 similar songs from the same cluster.
-            next_songs = clusters[clusters['clusters'] == cluster_id].sample(3)
+        # Store the selected song information in the global variable
+        selected_song_info = {
+            'title': selected_song_title,
+            'artist': selected_song_artist,
+            'cluster_id': cluster_id,
+            'selected_song_index': selected_song_index
+        }
 
-            return render_template('song.html', selected_song_title=selected_song_title, selected_song_artist=selected_song_artist, next_songs=next_songs)
+        # Retrieve the next 3 similar songs from the same cluster.
+        next_songs = clusters[clusters['clusters'] == cluster_id].sample(3)
+
+        return render_template('song.html', selected_song_title=selected_song_title, selected_song_artist=selected_song_artist, next_songs=next_songs)
+
+
+# New route for the submit_selection page.
+@app.route("/submit_selection", methods=['GET', 'POST'])
+def submit_selection():
+    global selected_song_info
+
+    # Check if a song has been selected previously
+    if selected_song_info:
+        # Retrieve information from the global variable
+        cluster_id = selected_song_info['cluster_id']
+        selected_song_index = selected_song_info['selected_song_index']
+
+        # Retrieve the selected song.
+        selected_song_title = selected_song_info['title']
+        selected_song_artist = selected_song_info['artist']
+
+        # Retrieve the next 3 similar songs from the same cluster.
+        next_songs = clusters[clusters['clusters'] == cluster_id].sample(3)
+
+        return render_template('song.html', selected_song_title=selected_song_title, selected_song_artist=selected_song_artist, next_songs=next_songs)
+
+    # If no song has been selected, redirect to the index page.
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
