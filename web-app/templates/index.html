@@ -1,55 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <script src="{{ url_for('static', filename='script.js') }}"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500&display=swap" rel="stylesheet">
-    </head>    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HearAndNow Karaoke Song Recommendation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
 <body>
-    <title>HearAndNow Karaoke App</title>
-
-    {% if selected_song %}
-        <h1>Selected Song</h1>
-        <p>Title: {{ selected_song['track_name'].values[0] }}</p>
-        <p>Artist: {{ selected_song['artist_name'].values[0] }}</p>
-        <p><a href="{{ url_for('song') }}">View Details</a></p>
-    {% else %}
-        <h1>Welcome to the HearAndNow Karaoke App!</h1>
-        <h2>Select your song! What are you in the mood to sing right now?</h2>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>HearAndNow Karaoke Recommended Songs</th>
-                    <th>
-                    <button class="refreshButton"onclick="reroll()">Re-roll Songs</button>
-                    </th>
+    <h1>HearAndNow Karaoke Song Recommendation System</h1>
+    <a href="http://localhost:8888/notebooks/song-recommend-ml.ipynb" target="_blank">Check out the Jupyter Notebook for this project!</a>
+    <h2>What would you like to sing?</h2>
+    <form method="POST" action="/select_song">
+        <table border="1">
+            <tr>
+                <th>Song Group</th>
+                <th>HearAndNow Recommended Song</th>
+            </tr>
+            {% for cluster in clusters['clusters'].unique() %}
+                {% set random_song_data = clusters[clusters['clusters'] == cluster].sample(n=1)[['track_name', 'artist_name']].values[0] %}
+                <tr class="song-row" onclick="selectSong(this, '{{ random_song_data[0] }}');">
+                    <td>{{ cluster }}</td>
+                    <td>{{ random_song_data[0] }} by {{ random_song_data[1] }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for cluster_id in clusters['clusters'].unique() %}
-                    <tr>
-                        <td>
-                            {% set selected_song = clusters[clusters['clusters'] == cluster_id].sample() %}
-                            <p>Title: {{ selected_song['track_name'].values[0] }}</p>
-                            <p>Artist: {{ selected_song['artist_name'].values[0] }}</p>
-                        </td>
-                        <td>
-                            <form action="{{ url_for('song') }}" method="post">
-                                <input type="hidden" name="cluster_id" value="{{ cluster_id }}">
-                                <input type="hidden" name="selected_song_index" value="{{ loop.index0 }}">
-                                <input type="hidden" name="selected_song_title" value="{{ selected_song['track_name'].values[0] }}">
-                                <input type="hidden" name="selected_song_artist" value="{{ selected_song['artist_name'].values[0] }}">
-                                <button type="submit">Select</button>
-                            </form>                            
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+            {% endfor %}
         </table>
-    {% endif %}
-
+        <input type="hidden" name="selected_song" id="selected_song_input" value="">
+        <button type="submit" id="submit_button" disabled>Submit</button>
+        <button type="button" class="refreshButton" onclick="window.location.href='/refresh'">Re-Roll Songs</button>
+    </form>    
+    <div id="history-and-percentages">
+        <div class="history-section">
+            <p>Previously Selected:</p>
+            <div class="compact-list">
+                {% for song, count in user_selections.items() %}
+                    {% set artist = clusters[clusters['track_name'] == song]['artist_name'].iloc[0] %}
+                    <div>{{ song }} by {{ artist }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    
+        <div class="percentages-section">
+            <p>Song Group Selection Percentages:</p>
+            <div class="compact-list">
+                {% for cluster, percentage in cluster_percentages.items() %}
+                    <div>Song Group {{ cluster }}: {{ "{:.2f}".format(percentage) }}%</div>
+                {% endfor %}
+            </div>
+        </div>
+    
+    <script>
+        function selectSong(row, songName) {
+            var radioInput = document.getElementById('selected_song_input');
+            var submitButton = document.getElementById('submit_button');
+            radioInput.value = songName;
+            submitButton.removeAttribute('disabled');
+            row.style.backgroundColor = '#87CEEB';
+            var otherRows = document.querySelectorAll('.song-row');
+            for (var i = 0; i < otherRows.length; i++) {
+                if (otherRows[i] !== row) {
+                    otherRows[i].style.backgroundColor = '';
+                }
+            }
+        }
+    </script>
 </body>
 </html>

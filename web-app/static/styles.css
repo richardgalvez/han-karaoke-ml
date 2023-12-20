@@ -1,3 +1,4 @@
+/* styles.css */
 body {
     font-family: 'Chakra Petch', sans-serif;
     text-align: center;
@@ -15,17 +16,17 @@ h3, p {
 }
 
 table {
-    width: 80%;
+    width: 60%;
     margin-top: 20px;
     border-collapse: collapse;
     margin: 0 auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 th, td {
     border: 1px solid #ddd;
     text-align: center;
-    padding: 15px;
+    padding: 10px;
 }
 
 th {
@@ -34,11 +35,11 @@ th {
 }
 
 #selected-song {
-    border: 2px solid #3498db; /* Border color for the box around the selected song */
+    border: 2px solid #a7d0eb;
     padding: 15px;
     margin: 20px;
-    font-size: 1.2em; /* Increase font size for better visibility */
-    background-color: #d2f8f1; /* Background color for the box */
+    font-size: 1.2em;
+    background-color: #4b9487;
 }
 
 button {
@@ -52,7 +53,7 @@ button {
 
 button:hover {
     background-color: #fff;
-    color: #3498db;
+    color: #99c8e7;
 }
 
 .refreshButton {
@@ -64,4 +65,21 @@ button:hover {
 .refreshButton:hover {
     background-color: #fff;
     color: #2ecc71;
+}
+
+#history-and-percentages {
+    display: flex;
+    justify-content: space-around;
+}
+
+.compact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.compact-list div {
+    padding: 4px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
 }

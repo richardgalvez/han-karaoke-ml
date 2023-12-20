@@ -1,15 +1,14 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, redirect
 import pandas as pd
-import random
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-
+from collections import defaultdict
 
 def preprocess_data(df):
     # Drop unnecessary columns.
     dfd = df.drop(['track_id', 'artist_id', 'album_id', 'duration', 'release_date', 'mode', 'playlist_id', 'playlist_name'], axis=1)
-     # Exclude non-numeric columns
+    # Exclude non-numeric columns.
     numeric_cols = dfd.select_dtypes(include=['float64', 'int64']).columns
     dfd = dfd[numeric_cols]
     # Implement standard scaler for data.
@@ -20,7 +19,7 @@ def preprocess_data(df):
     return scaled_data
 
 def apply_kmeans(scaled_data, num_clusters=15):
-    # Use KMeans (non-descriptive method) with same seed as Jupyter notebook for consistency.
+    # Use KMeans (non-descriptive method) with the same seed for consistency.
     kmeans = KMeans(n_clusters=num_clusters, random_state=75)
     kfit = kmeans.fit(scaled_data)
     # Predicting the clusters.
@@ -32,7 +31,6 @@ def apply_kmeans(scaled_data, num_clusters=15):
 
     return data_scaled
 
-    # Use Principal Component Analysis (PCA) to gather results.
 def apply_pca(data_scaled):
     pca = PCA(n_components=2)
     pca_data = pd.DataFrame(pca.fit_transform(data_scaled.drop(['clusters'], axis=1)), columns=['PC1', 'PC2'])
@@ -40,7 +38,6 @@ def apply_pca(data_scaled):
 
     return pca_data
 
-# Initialize the Flask application.
 app = Flask(__name__)
 
 # Load karaoke song data.
@@ -58,83 +55,52 @@ pca_data = apply_pca(data_scaled)
 # Merge the original DataFrame with the clustered data.
 clusters = pd.merge(df[['track_name', 'artist_name']], data_scaled[['clusters']], left_index=True, right_index=True)
 
-# Define a global variable to store the selected song information
-selected_song_info = None
+# Define a dictionary to store user song selections and their rates.
+user_selections = defaultdict(int)
 
-# Home page.
-@app.route("/", methods=['GET', 'POST'])
-def index():
-    selected_song = None
+@app.route('/')
+def home():
+    # Calculate the overall percentages.
+    overall_counts = defaultdict(int)
+    total_selections = sum(user_selections.values())
 
-    if request.method == 'POST':
-        cluster_id = int(request.form.get('cluster_id'))
-        selected_song_index = int(request.form.get('selected_song_index'))
+    for song, count in user_selections.items():
+        cluster = clusters[clusters['track_name'] == song]['clusters'].iloc[0]
+        overall_counts[cluster] += count
 
-        # Retrieve the selected song.
-        selected_song = clusters[clusters['clusters'] == cluster_id].iloc[selected_song_index]
+    overall_percentages = {cluster: (count / total_selections) * 100 if total_selections > 0 else 0 for cluster, count in overall_counts.items()}
 
-        # Pass the selected song information to the /song route directly.
-        return render_template('song.html', selected_song_title=selected_song['track_name'].values[0], selected_song_artist=selected_song['artist_name'].values[0])
+    # Sort the overall_percentages dictionary by percentage in descending order.
+    sorted_cluster_percentages = {cluster: percentage for cluster, percentage in sorted(overall_percentages.items(), key=lambda item: item[1], reverse=True)}
 
-    return render_template('index.html', clusters=clusters, selected_song=selected_song)
-
-
-# Selected song page.
-@app.route("/song", methods=['GET', 'POST'])
-def song():
-    global selected_song_info
-
-    # Retrieve form inputs.
-    cluster_id_str = request.form.get('cluster_id')
-    selected_song_index_str = request.form.get('selected_song_index')
-
-    # Check if cluster_id and selected_song_index are not empty.
-    if cluster_id_str and selected_song_index_str:
-        # Convert to integers
-        cluster_id = int(cluster_id_str)
-        selected_song_index = int(selected_song_index_str)
-
-        # Retrieve the selected song.
-        selected_song_title = request.form.get('selected_song_title')
-        selected_song_artist = request.form.get('selected_song_artist')
-
-        # Store the selected song information in the global variable
-        selected_song_info = {
-            'title': selected_song_title,
-            'artist': selected_song_artist,
-            'cluster_id': cluster_id,
-            'selected_song_index': selected_song_index
-        }
-
-        # Retrieve the next 3 similar songs from the same cluster.
-        next_songs = clusters[clusters['clusters'] == cluster_id].sample(3)
-
-        return render_template('song.html', selected_song_title=selected_song_title, selected_song_artist=selected_song_artist, next_songs=next_songs)
+    return render_template('index.html', selected_song=None, selected_song_artist=None, user_selections=user_selections, cluster_percentages=sorted_cluster_percentages, clusters=clusters)
 
 
-# New route for the submit_selection page.
-@app.route("/submit_selection", methods=['GET', 'POST'])
-def submit_selection():
-    global selected_song_info
+@app.route('/select_song', methods=['POST'])
+def select_song():
+    selected_song = request.form['selected_song']
+    selected_song_artist = clusters[clusters['track_name'] == selected_song]['artist_name'].iloc[0]
 
-    # Check if a song has been selected previously
-    if selected_song_info:
-        # Retrieve information from the global variable
-        cluster_id = selected_song_info['cluster_id']
-        selected_song_index = selected_song_info['selected_song_index']
+    user_selections[selected_song] += 1
 
-        # Retrieve the selected song.
-        selected_song_title = selected_song_info['title']
-        selected_song_artist = selected_song_info['artist']
+    # Calculate the percentage rate for each cluster based on the number of songs chosen in each cluster.
+    cluster_counts = defaultdict(int)
+    total_selections = sum(user_selections.values())
 
-        # Retrieve the next 3 similar songs from the same cluster.
-        next_songs = clusters[clusters['clusters'] == cluster_id].sample(3)
+    for song, count in user_selections.items():
+        cluster = clusters[clusters['track_name'] == song]['clusters'].iloc[0]
+        cluster_counts[cluster] += count
 
-        return render_template('song.html', selected_song_title=selected_song_title, selected_song_artist=selected_song_artist, next_songs=next_songs)
+    cluster_percentages = {cluster: (count / total_selections) * 100 for cluster, count in cluster_counts.items()}
 
-    # If no song has been selected, redirect to the index page.
-    return redirect(url_for('index'))
+    # Sort the cluster_percentages dictionary by percentage within each cluster in descending order.
+    sorted_cluster_percentages = {cluster: percentage for cluster, percentage in sorted(cluster_percentages.items(), key=lambda item: item[1], reverse=True)}
 
+    return render_template('index.html', songs=clusters['track_name'].tolist(), selected_song=selected_song, selected_song_artist=selected_song_artist, user_selections=user_selections, cluster_percentages=sorted_cluster_percentages, clusters=clusters)
+
+@app.route('/refresh')
+def refresh_songs():
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8080)
