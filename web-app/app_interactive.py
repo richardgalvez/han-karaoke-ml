@@ -4,6 +4,9 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from collections import defaultdict
+import nbformat
+from nbconvert import HTMLExporter
+from nbconvert.preprocessors import ExecutePreprocessor
 
 def preprocess_data(df):
     # Drop unnecessary columns.
@@ -18,6 +21,7 @@ def preprocess_data(df):
 
     return scaled_data
 
+
 def apply_kmeans(scaled_data, num_clusters=15):
     # Use KMeans (descriptive, unsupervised method) with the same seed as Jupyter Notebook for consistency.
     kmeans = KMeans(n_clusters=num_clusters, random_state=75)
@@ -31,12 +35,29 @@ def apply_kmeans(scaled_data, num_clusters=15):
 
     return data_scaled
 
+
 def apply_pca(data_scaled):
     pca = PCA(n_components=2)
     pca_data = pd.DataFrame(pca.fit_transform(data_scaled.drop(['clusters'], axis=1)), columns=['PC1', 'PC2'])
     pca_data['clusters'] = data_scaled['clusters']
 
     return pca_data
+
+
+def convert_notebook_to_html(notebook_path):
+    # Read the Jupyter Notebook content.
+    with open(notebook_path, 'r', encoding='utf-8') as notebook_file:
+        notebook_content = nbformat.read(notebook_file, as_version=4)
+
+    # Configure the HTMLExporter.
+    html_exporter = HTMLExporter()
+    html_exporter.preprocessors = [ExecutePreprocessor(timeout=-1, kernel_name='python3')]  # Execute code cells
+
+    # Convert the notebook to HTML.
+    (body, resources) = html_exporter.from_notebook_node(notebook_content)
+
+    return body
+
 
 app = Flask(__name__)
 
@@ -98,9 +119,20 @@ def select_song():
 
     return render_template('index.html', songs=clusters['track_name'].tolist(), selected_song=selected_song, selected_song_artist=selected_song_artist, user_selections=user_selections, cluster_percentages=sorted_cluster_percentages, clusters=clusters)
 
+
 @app.route('/refresh')
 def refresh_songs():
     return redirect('/')
+
+
+# Render the Jupyter Notebook as HTML to view.
+@app.route('/notebook')
+def notebook():
+    # Convert the Jupyter Notebook to HTML
+    notebook_html = convert_notebook_to_html('song-recommend-ml.ipynb')
+
+    return render_template('notebook.html', notebook_html=notebook_html)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8080)

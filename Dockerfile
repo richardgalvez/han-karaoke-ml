@@ -4,8 +4,8 @@ FROM ubuntu:latest
 # Run a system update, install python3 and pip3.
 RUN apt-get update && apt-get install python3 python3-pip -y
 
-# Install ML packages and modules: jupyter, NumPy, Pandas, scikit-learn, matplotlib, plotly.
-RUN pip3 install jupyter numpy pandas scikit-learn scikit-surprise matplotlib seaborn plotly
+# Install ML packages and modules: jupyter, NumPy, Pandas, scikit-learn, matplotlib, plotly, nbformat, nbconvert.
+RUN pip3 install jupyter numpy pandas scikit-learn scikit-surprise matplotlib seaborn plotly nbformat nbconvert
 
 # Install Flask.
 RUN pip3 install flask

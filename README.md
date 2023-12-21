@@ -31,20 +31,40 @@ Design and develop your fully functional data product that addresses your identi
 ### Deploy Application with Docker (Local)
 1. Download project files and unzip (or clone repository).
 2. Go to root directory of folder.
+3. Run in terminal/command window
 
-3. Run in terminal/command window:
+   (Windows/Mac):
+          docker compose up --build -d
 
-    docker compose up --build -d
+
+    (Amazon Linux):
+
+    docker-compose up --build -d 
 
 Done! Next:
 
-Access Jupyter Notebook Interface/Home at: http://localhost:8888
+(Local):
+
+Access Full Jupyter Notebook Interface/Home at: http://localhost:8888
 
 Access Flask Web App UI at: http://localhost:8080
 
 
-To stop container and remove:
+(Cloud Server/Web - HTTP, not HTTPS):
+
+Access Full Jupyter Notebook Interface/Home at: http://{server-dns-name}:8888
+
+Access Flask Web App UI at: http://{server-dns-name}:8080
+
+
+To stop container (Windows/Mac):
 
 docker compose down
 
+(Amazon Linux):
+
+docker-compose down
+
+
+To remove container (All platforms):
 docker rmi han-karaoke-ml-c964
