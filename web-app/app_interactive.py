@@ -58,7 +58,7 @@ def convert_notebook_to_html(notebook_path):
 
     return body
 
-
+# Initialize Flask application UI (non-descriptive method).
 app = Flask(__name__)
 
 # Load karaoke song data.
@@ -119,7 +119,7 @@ def select_song():
 
     return render_template('index.html', songs=clusters['track_name'].tolist(), selected_song=selected_song, selected_song_artist=selected_song_artist, user_selections=user_selections, cluster_percentages=sorted_cluster_percentages, clusters=clusters)
 
-
+# Refresh page to re-roll current song recommendations.
 @app.route('/refresh')
 def refresh_songs():
     return redirect('/')

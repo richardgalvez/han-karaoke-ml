@@ -4,7 +4,7 @@ FROM ubuntu:latest
 # Run a system update, install python3 and pip3.
 RUN apt-get update && apt-get install python3 python3-pip -y
 
-# Install ML packages and modules: jupyter, NumPy, Pandas, scikit-learn, matplotlib, plotly, nbformat, nbconvert.
+# Install ML packages and modules: jupyter, NumPy, Pandas, scikit-learn, matplotlib, seaborn, plotly, nbformat, nbconvert.
 RUN pip3 install jupyter numpy pandas scikit-learn scikit-surprise matplotlib seaborn plotly nbformat nbconvert
 
 # Install Flask.
@@ -19,5 +19,5 @@ COPY . .
 EXPOSE 8888
 EXPOSE 8080
 
-# Start the Juptyer notebook server and Flask app.
+# Script to start the Juptyer notebook server and Flask app.
 ENTRYPOINT [ "sh", "./start-apps.sh" ]
