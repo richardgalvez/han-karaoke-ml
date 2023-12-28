@@ -8,6 +8,8 @@ import nbformat
 from nbconvert import HTMLExporter
 from nbconvert.preprocessors import ExecutePreprocessor
 
+# Reference (Areas/Sections of code and concept is derived from this source): https://www.enjoyalgorithms.com/blog/music-recommendation-system-using-ml
+
 def preprocess_data(df):
     # Drop unnecessary columns.
     dfd = df.drop(['track_id', 'artist_id', 'album_id', 'duration', 'release_date', 'mode', 'playlist_id', 'playlist_name'], axis=1)
@@ -23,7 +25,7 @@ def preprocess_data(df):
 
 
 def apply_kmeans(scaled_data, num_clusters=15):
-    # Use KMeans (descriptive, unsupervised method) with the same seed as Jupyter Notebook for consistency.
+    # Use KMeans, a descriptive, unsupervised method, for training and using the same seed as Jupyter Notebook for consistency.
     kmeans = KMeans(n_clusters=num_clusters, random_state=75)
     kfit = kmeans.fit(scaled_data)
     # Predicting the clusters.
@@ -37,6 +39,7 @@ def apply_kmeans(scaled_data, num_clusters=15):
 
 
 def apply_pca(data_scaled):
+    # Use Principal Component Analysis (PCA), a descriptive, unsupervised method, to reduce the dimensionality of the data.
     pca = PCA(n_components=2)
     pca_data = pd.DataFrame(pca.fit_transform(data_scaled.drop(['clusters'], axis=1)), columns=['PC1', 'PC2'])
     pca_data['clusters'] = data_scaled['clusters']
@@ -51,12 +54,14 @@ def convert_notebook_to_html(notebook_path):
 
     # Configure the HTMLExporter.
     html_exporter = HTMLExporter()
-    html_exporter.preprocessors = [ExecutePreprocessor(timeout=-1, kernel_name='python3')]  # Execute code cells
+    # Execute code cells.
+    html_exporter.preprocessors = [ExecutePreprocessor(timeout=-1, kernel_name='python3')]
 
     # Convert the notebook to HTML.
     (body, resources) = html_exporter.from_notebook_node(notebook_content)
 
     return body
+
 
 # Initialize Flask application UI (non-descriptive method).
 app = Flask(__name__)
@@ -91,7 +96,7 @@ def home():
 
     overall_percentages = {cluster: (count / total_selections) * 100 if total_selections > 0 else 0 for cluster, count in overall_counts.items()}
 
-    # Sort the overall_percentages dictionary by percentage in descending order so it can be seen upon loading.
+    # Sort the overall_percentages dictionary by percentage in descending order so it can be seen upon loading the homepage initially.
     sorted_cluster_percentages = {cluster: percentage for cluster, percentage in sorted(overall_percentages.items(), key=lambda item: item[1], reverse=True)}
 
     return render_template('index.html', selected_song=None, selected_song_artist=None, user_selections=user_selections, cluster_percentages=sorted_cluster_percentages, clusters=clusters)
@@ -119,6 +124,7 @@ def select_song():
 
     return render_template('index.html', songs=clusters['track_name'].tolist(), selected_song=selected_song, selected_song_artist=selected_song_artist, user_selections=user_selections, cluster_percentages=sorted_cluster_percentages, clusters=clusters)
 
+
 # Refresh page to re-roll current song recommendations.
 @app.route('/refresh')
 def refresh_songs():
@@ -128,7 +134,7 @@ def refresh_songs():
 # Render the Jupyter Notebook as HTML to view.
 @app.route('/notebook')
 def notebook():
-    # Convert the Jupyter Notebook to HTML
+    # Convert the Jupyter Notebook to HTML.
     notebook_html = convert_notebook_to_html('song-recommend-ml.ipynb')
 
     return render_template('notebook.html', notebook_html=notebook_html)

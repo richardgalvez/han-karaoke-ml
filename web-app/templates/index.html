@@ -7,11 +7,15 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     </head>
     <body>
+        <!-- Header -->
         <h1>HearAndNow Karaoke Song Recommendation System</h1>
+        <!-- Link to view Jupyter Notebook rendered in HTML with nbconvert. -->
         <a href="{{ url_for('notebook') }}" target="_blank">Take a look at the Jupyter Notebook for this project!</a>
 
+        <!-- Song Select Form -->
         <h2>What would you like to sing?</h2>
         <form method="POST" action="/select_song" id="songForm">
+            <!-- Table for displaying song clusters aka Groups. -->
             <table border="1">
                 <tr>
                     <th>Song Group</th>
@@ -19,17 +23,21 @@
                 </tr>
                 {% for cluster in clusters['clusters'].unique() %}
                     {% set random_song_data = clusters[clusters['clusters'] == cluster].sample(n=1)[['track_name', 'artist_name']].values[0] %}
+                    <!-- Song row with data attributes. -->
                     <tr class="song-row" data-song="{{ random_song_data[0] }}">
                         <td>{{ cluster }}</td>
                         <td>{{ random_song_data[0] }} by {{ random_song_data[1] }}</td>
                     </tr>
                 {% endfor %}
             </table>
+            <!-- Hidden input to store the selected song. -->
             <input type="hidden" name="selected_song" id="selected_song_input" value="">
+            <!-- Buttons for submitting and refreshing/re-rolling generated song list. -->
             <button type="button" class="submit-button" onclick="submitForm()">Submit</button>
             <button type="button" class="refreshButton" onclick="window.location.href='/refresh'">Re-Roll Songs</button>
         </form>
 
+        <!-- Display newly selected song information below list. -->
         <div id="selected-song">
             {% if selected_song %}
                 <h3>Your Selected Song is:</h3>
@@ -70,10 +78,13 @@
             </div>
         </div>
 
+        <!-- JavaScript to help handle song selection. -->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                // Get all song rows
                 var songRows = document.querySelectorAll('.song-row');
 
+                // Attach click event listeners to each song row
                 songRows.forEach(function (row) {
                     row.addEventListener('click', function () {
                         var selectedSongInput = document.getElementById('selected_song_input');
@@ -97,6 +108,7 @@
                 });
             });
 
+            // Function to help submit the form
             function submitForm() {
                 document.getElementById('songForm').submit();
             }

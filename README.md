@@ -33,13 +33,10 @@ Design and develop your fully functional data product that addresses your identi
 2. Go to root directory of folder.
 3. Run in terminal/command window
 
-   (Windows/Mac):
-          docker compose up --build -d
+    (Windows/Mac): docker compose up --build -d
 
 
-    (Amazon Linux):
-
-    docker-compose up --build -d 
+    (Amazon Linux): docker-compose up --build -d 
 
 Done! Next:
 
@@ -50,6 +47,7 @@ Access Full Jupyter Notebook Interface/Home at: http://localhost:8888
 Access Flask Web App UI at: http://localhost:8080
 
 
+
 (Cloud Server/Web - HTTP, not HTTPS):
 
 Access Full Jupyter Notebook Interface/Home at: http://{server-dns-name}:8888
@@ -57,14 +55,13 @@ Access Full Jupyter Notebook Interface/Home at: http://{server-dns-name}:8888
 Access Flask Web App UI at: http://{server-dns-name}:8080
 
 
-To stop container (Windows/Mac):
 
-docker compose down
+To stop container:
 
-(Amazon Linux):
-
-docker-compose down
+    (Windows/Mac): docker compose down
 
 
-To remove container (All platforms):
-docker rmi han-karaoke-ml-c964
+    (Amazon Linux): docker-compose down
+
+
+To remove container (All platforms): docker rmi han-karaoke-ml-c964
