@@ -1,4 +1,4 @@
-# HearAndNow Recommendation Machine Learning Python Application - WGU C964 Computer Science Capstone
+# HearAndNow Karaoke Song Recommendation System - Machine Learning Python Application
 
 ## Task Requirements
 
@@ -30,14 +30,15 @@ Design and develop your fully functional data product that addresses your identi
 
 ## Deploy Application with Docker Compose
 
-1.	Install Docker for your platform: https://www.docker.com/products/docker-desktop/
+1.	Install Docker for your platform: https://www.docker.com/products/docker-desktop/.
 
-2.	Ensure Docker Compose is installed your on platform: https://docs.docker.com/compose/install/
+2.	Ensure Docker Compose is installed your on platform: https://docs.docker.com/compose/install/.
 
-Download project files and unzip (or clone repository)
-3. Go to root directory of project folder.
+3. Download project files and unzip (or clone repository).
 
-4. Run in terminal/command window:
+4. Open a Command Line (Windows) or Terminal (Mac/Linux) window and change into the directory of the project root folder.
+
+5. Create the Docker image and deploy the container with commands:
 
         (Windows/Mac): 
         docker compose up --build -d
@@ -50,21 +51,21 @@ Done!
 
 ### (Local Deployment)
 
-Access Full Jupyter Notebook Interface/Home at: http://localhost:8888
+Access Full Jupyter Notebook Interface/Home at: http://localhost:8888.
 
-Access Flask Web App UI at: http://localhost:8080
+Access Flask Web App UI at: http://localhost:8080.
 
 
 ### (Cloud Server/Web - HTTP, not HTTPS): 
 Must have ports 8888 and 8080 open inbound.
 
-Access Flask Web App UI at: http://{server-dns-name OR ip address}:8080
+Access Flask Web App UI at: http://{server-dns-name OR ip address}:8080.
 
-Access Full Jupyter Notebook Interface/Home at: http://{server-dns-name OR ip address}:8888
+Access Full Jupyter Notebook Interface/Home at: http://{server-dns-name OR ip address}:8888.
 
 #### Removal and Clean-up
 
-To stop container:
+To stop and remove the running container:
 
     (Windows/Mac): 
     docker compose down
@@ -74,6 +75,6 @@ To stop container:
     docker-compose down
 
 
-To remove container (All platforms): 
+To remove the container image (All platforms): 
 
         docker rmi han-karaoke-ml-c964
