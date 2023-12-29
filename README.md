@@ -1,6 +1,6 @@
-## HearAndNow Recommendation Machine Learning Python Application - WGU C964 Computer Science Capstone
+# HearAndNow Recommendation Machine Learning Python Application - WGU C964 Computer Science Capstone
 
-### Task Requirements
+## Task Requirements
 
 Design and develop your fully functional data product that addresses your identified business problem or organizational need from part A. Include each of the following attributes, as they are the minimum required elements for the product:
 
@@ -28,40 +28,52 @@ Design and develop your fully functional data product that addresses your identi
 
 •   a user-friendly, functional dashboard that includes three visualization types
 
-### Deploy Application with Docker (Local)
-1. Download project files and unzip (or clone repository).
-2. Go to root directory of folder.
-3. Run in terminal/command window
+## Deploy Application with Docker Compose
 
-    (Windows/Mac): docker compose up --build -d
+1.	Install Docker for your platform: https://www.docker.com/products/docker-desktop/
 
+2.	Ensure Docker Compose is installed your on platform: https://docs.docker.com/compose/install/
 
-    (Amazon Linux): docker-compose up --build -d 
+Download project files and unzip (or clone repository)
+3. Go to root directory of project folder.
 
-Done! Next:
+4. Run in terminal/command window:
 
-(Local):
+        (Windows/Mac): 
+        docker compose up --build -d
+        
+        
+        (Amazon Linux): 
+        docker-compose up --build -d 
+
+Done!
+
+### (Local Deployment)
 
 Access Full Jupyter Notebook Interface/Home at: http://localhost:8888
 
 Access Flask Web App UI at: http://localhost:8080
 
 
+### (Cloud Server/Web - HTTP, not HTTPS): 
+Must have ports 8888 and 8080 open inbound.
 
-(Cloud Server/Web - HTTP, not HTTPS):
+Access Flask Web App UI at: http://{server-dns-name OR ip address}:8080
 
-Access Full Jupyter Notebook Interface/Home at: http://{server-dns-name}:8888
+Access Full Jupyter Notebook Interface/Home at: http://{server-dns-name OR ip address}:8888
 
-Access Flask Web App UI at: http://{server-dns-name}:8080
-
-
+#### Removal and Clean-up
 
 To stop container:
 
-    (Windows/Mac): docker compose down
+    (Windows/Mac): 
+    docker compose down
 
 
-    (Amazon Linux): docker-compose down
+    (Amazon Linux): 
+    docker-compose down
 
 
-To remove container (All platforms): docker rmi han-karaoke-ml-c964
+To remove container (All platforms): 
+
+        docker rmi han-karaoke-ml-c964
